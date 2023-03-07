@@ -8,23 +8,22 @@ import copy
 
 np.set_printoptions(precision = 3)
 tpmPanda = pd.read_excel(sys.argv[1], header = None)
-tpm = np.array(tpmPanda)
-tpm2 = tpm.copy()
+baseTPM = np.array(tpmPanda)
+modTPM = baseTPM.copy()
 
-baseChain: MarkovChain = MarkovChain(tpm)
-modifiedChain: MarkovChain = MarkovChain(tpm2)
+modifiedChain: MarkovChain = MarkovChain(modTPM)
 
 def menu():
     global modifiedChain
     while(True):
-        print("TPM = \n", modifiedChain.tpm, sep = '')
-        print("\nWelcome to a basic finite state space MC calculator, what would you like to do to this tpm?")
+        print("\nTPM = \n", modifiedChain.tpm, sep = '', end = " ")
+        print("\nWelcome to a basic finite state space MC calculator, what would you like to know about this TPM?")
         print(" 1) Solve For Unique Stationary Distribution")
-        print(" 2) Show Recurrent and Transient Classes")
+        print(" 2) Show Communication Classes")
         print(" 3) Make States Absorbing")
         print(" 4) Show Hitting Time Matrices")
         print(" 5) Condense Recurrent Classes")
-        print(" 6) ")
+        print(" 6) Switch to Recurrent Chain")
         print(" 7) Return to Base Chain")
         print(" 8) Exit")
         numChoice = getInputRange(1, 8)
@@ -44,6 +43,8 @@ def menu():
             showHittingTimeMatrices()
         elif numChoice == 5:
             condenseRecurrent()
+        elif numChoice == 6:
+            switchToRecurrentClass()
         elif numChoice == 7:
             resetChain()
         elif numChoice == 8:
@@ -87,7 +88,7 @@ def makeAbsorbingState():
     global modifiedChain
     while(True):
         try:
-            toAbsorb = int(input("What state would you like to make absoribing? "))
+            toAbsorb = int(input("Which state would you like to make absorbing? "))
             modifiedChain = cc.makeAbsorbingState(modifiedChain, toAbsorb)
             break
         except MarkovChainException as e:
@@ -98,11 +99,11 @@ def makeAbsorbingState():
     print("New TPM =\n", modifiedChain.tpm, sep = '')  
 
 """
-Resets chain back to original input
+Resets chain back to original input (from excel or csv)
 """
 def resetChain():
-    global modifiedChain, baseChain
-    tpm = copy.deepcopy(baseChain.tpm)
+    global modifiedChain, baseTPM
+    tpm = baseTPM.copy()
     modifiedChain = MarkovChain(tpm)
 
 def showHittingTimeMatrices() -> None:
@@ -112,12 +113,9 @@ def showHittingTimeMatrices() -> None:
     print("Formatted Matrix =\n", formattedMatrix, sep = '')
     print("M =\n", M, sep = '')
     print("MS =\n", MS, sep = '')
-    print("Recurrent Classes: ")                                    #Prints Recurrent Classes    
-    for i, x in enumerate(modifiedChain.recurrentClasses):
-        if i < len(modifiedChain.recurrentClasses) - 1:
-            print("R", i, ": ", x, sep = '', end = ", ")
-        else:
-            print("R", i, ": ", x, sep = '')
+    
+    printRecurrentClasses()
+
     print("Transient States: ")                                     #Prints Transient States
     transientStates = modifiedChain.getTransientStates()
     for i, x in enumerate(transientStates):
@@ -132,17 +130,16 @@ def showHittingTimeMatrices() -> None:
         print("MS[i, j] represents the probability of being absorbed into recurrent class j, given that you started in transient state i")
         print("Additionally you can find the expected time until absorbtion given starting in transient state i, by performing the row sum M[i]")
 
+"""
+Condenses recurrent classes and formats matrix, and returns to main menu to continue for additional calculations to be performed
+"""
 def condenseRecurrent():
     global modifiedChain
     print("Now condensing recurrent classes into absorbing states and formatting matrix")
     formattedMatrix = cc.getFormattedMatrix(modifiedChain)
     print("Formatted Matrix =\n", formattedMatrix, sep = '')
 
-    for i, x in enumerate(modifiedChain.recurrentClasses):
-        if i < len(modifiedChain.recurrentClasses) - 1:
-            print("R", i, ": ", x, sep = '', end = ", ")
-        else:
-            print("R", i, ": ", x, sep = '')
+    printRecurrentClasses()
 
     transientStates = modifiedChain.getTransientStates()
     for i, x in enumerate(transientStates):
@@ -151,7 +148,32 @@ def condenseRecurrent():
         else:
             print("T", i, ": ", x, sep = '')
     
-    modifiedChain = MarkovChain(formattedMatrix)
+    modifiedChain = MarkovChain(formattedMatrix)            # Changed modified chain to the new formatted matrix
+
+#Prints the recurrent classes of the Modified Chain
+def printRecurrentClasses():
+    global modifiedChain
+    print("Recurrent Classes: ")  
+    for i, x in enumerate(modifiedChain.recurrentClasses):
+        if i < len(modifiedChain.recurrentClasses) - 1:
+            print("R", i, ": ", x, sep = '', end = ", ")
+        else:
+            print("R", i, ": ", x, sep = '')
+
+def switchToRecurrentClass():
+    global modifiedChain
+    printRecurrentClasses()
+    while(True):
+        try:
+            recClass = int(input("Which recurrent class would you like to switch to? "))
+            modifiedChain = cc.getChainOfRecurrentClass(modifiedChain, recClass)
+            break
+        # except ValueError:
+        #     print("Please provide a valid input")
+        except MarkovChainException as e:
+            print(e.message)
+
+
 
 
 menu()

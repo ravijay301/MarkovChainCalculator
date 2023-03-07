@@ -4,7 +4,7 @@ from MarkovChain import MarkovChain
 from MarkovChainException import MarkovChainException
 
 """
-Given a markovChainSolves for the unique stationary distribution if it is possible, throws a MarkovChainException if
+Given a markovChainSolves for the unique stationary distribution if it is possible, raises a MarkovChainException if
 it is not possible (IE chain not being irreducible).
 """
 def getStationaryDistribution(markovChain: MarkovChain) -> np.ndarray:
@@ -24,7 +24,7 @@ def getStationaryDistribution(markovChain: MarkovChain) -> np.ndarray:
 
 """
 Given a Markov Chain and a specified state, turns the state into a recurrent one, returns the new chain, leaving the
-original unchanged
+original unchanged. Raises MarkovChainException, if  the state is not valid
 """
 def makeAbsorbingState(markovChain: MarkovChain, state: int) -> MarkovChain:
     if state < 0 or state >= len(markovChain.tpm):
@@ -40,16 +40,20 @@ def makeAbsorbingState(markovChain: MarkovChain, state: int) -> MarkovChain:
     return newMC
 
 """
-Given a MC and Recurrent Class, returns a MarkovChain with just the specified recurrent class.
+Given a MC and Recurrent Class, returns a MarkovChain with just the specified recurrent class. Raises MarkovChainException
+if the recurrent class is invalid
 """
 def getChainOfRecurrentClass(markovChain: MarkovChain, classNum: int) -> MarkovChain:
-    recurrentClass = markovChain.recurrentClasses[classNum]
-    sliceArr = []
-    sliceArr.append([])
+    recurrentClasses = markovChain.recurrentClasses
+    
+    if classNum < 0 or classNum >= len(recurrentClasses):
+        raise MarkovChainException("Invalid Recurrent Class")
+
+    recurrentClass = recurrentClasses[classNum]
+    sliceOne = []
     for x in recurrentClass:
-        sliceArr[0].append([x])
-    sliceArr.append(recurrentClass)
-    return MarkovChain(markovChain.tpm[sliceArr])
+        sliceOne.append([x])
+    return MarkovChain(np.array(markovChain.tpm[sliceOne, recurrentClass]))
 
 def getProbOfAbsorbtionIntoRecurrentClass(markovChain: MarkovChain, classNum: int, initialState: int) -> float:
     formattedMatrix = getFormattedMatrix(markovChain)
