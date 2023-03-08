@@ -48,9 +48,11 @@ We can go through a simple example use using MultiRecCLasses.xlsx to show the ca
 
 
 # About
-* When I was told I could use my laptop on my stochastic processes exam, I simply had to find a way to automate my math. I then proceeded to spend way more time building this when I could have just studied for way less time (I couldn't even finish it before the exam)
-* On the bright side, I finished it, and if anyone else is put in this exact specific situation that I was, they have a prebuilt solution (I still got this for the final too)
+When I was told I could use my laptop on my stochastic processes exam, I simply had to find a way to automate my math. I then proceeded to spend way more time building this when I could have just studied for way less time (I couldn't even finish it before the exam)
 
-# Future Additions (Potential)
-* Could add better labeling for the states and different classes in the matrices, instead of making the user do it, probably through the use of a simply gui, though it may end up becoming an information dump
+On the bright side, I finished it, and if anyone else is put in this exact specific situation that I was, they have a prebuilt solution (I still got this for the final too)
+
+# Potential Future Additions
+* Add feature to compute the period of a given markov chain.
+* Add feature to calculate the *n* step transition probabilities, with additional feature of finding probability of ending up in a specified state given an initial probability distribution
 * Could also make my strongly connected components algorithm more readable because I wrote it based on sudocode from my algorithm notes, that were transcribed from my professors slide 6 months ago from one class where I was half-asleep while doing no additional algorithm research when writing my algorithm. Yeah that's not happening
