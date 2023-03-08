@@ -19,11 +19,18 @@ def main():
     global baseTPM, modifiedChain
     signal.signal(signal.SIGINT, signal_handler)
     np.set_printoptions(precision = 3)
+    if len(sys.argv) != 2:
+        print("You must supply exactly one command line argument of the excel file you want to run.") 
+        sys.exit(0)
     try: 
         tpmPanda = pd.read_excel(sys.argv[1], header = None)
     except ValueError:
         print("Invalid Excel File")
         sys.exit(0)
+    except FileNotFoundError:
+        print("File or directory " + sys.argv[1] +  " not found")
+        sys.exit(0)
+    
     baseTPM = np.array(tpmPanda)
     modTPM = baseTPM.copy()
     try: 
