@@ -20,9 +20,11 @@ def main():
 def menu():
     global modifiedChain
     while(True):
-        print("\nTPM = \n", modifiedChain.tpm, sep = '', end = " ")
-        print("\nWelcome to a basic finite state space MC calculator, what would you like to know about this TPM?")
-        print(" 1) Solve For Unique Stationary Distribution")
+        longLine()
+        print("Welcome to a basic finite state space MC calculator, what would you like to know about this TPM?")
+        longLine()
+        print("TPM = \n", modifiedChain.tpm, sep = '')
+        print("\n 1) Solve For Unique Stationary Distribution")
         print(" 2) Show Communication Classes")
         print(" 3) Make States Absorbing")
         print(" 4) Show Hitting Time Matrices")
@@ -31,10 +33,14 @@ def menu():
         print(" 7) Return to Base Chain")
         print(" 8) Exit")
         numChoice = getInputRange(1, 8)
-        if numChoice == 1:
+
+        longPlus()
+        if numChoice == 1:      
             solveUniqueStationary()
+
         elif numChoice == 2:
             showClasses()
+
         elif numChoice == 3:
             while(True):                #Idea is that usually you want to make more than one class absorbing
                 makeAbsorbingState()
@@ -43,16 +49,24 @@ def menu():
                     continue
                 else:
                     break
+
         elif numChoice == 4:
             showHittingTimeMatrices()
+
         elif numChoice == 5:
             condenseRecurrent()
+
         elif numChoice == 6:
             switchToRecurrentClass()
+
         elif numChoice == 7:
             resetChain()
+
         elif numChoice == 8:
+            longLine()
             break
+
+        longPlus()
     
 """
 Given an input range of int, will prompt CLI for input, and only will accept
@@ -121,12 +135,12 @@ def showHittingTimeMatrices() -> None:
     formattedMatrix = cc.getFormattedMatrix(modifiedChain)          # Obtains formatted matrix
     (M, MS) = cc.getHittingTimeMatrices(formattedMatrix, 0)         # Obtains M and MS Matrices from formatted matrix
     print("Formatted Matrix =\n", formattedMatrix, sep = '')
-    print("M =\n", M, sep = '')
-    print("MS =\n", MS, sep = '')
+    print("\nM =\n", M, sep = '')
+    print("\nMS =\n", MS, sep = '', end = "\n\n")
     
     printRecurrentClasses()
 
-    print("Transient States: ")                                     #Prints Transient States
+    print("\nTransient States: ")                                     #Prints Transient States
     transientStates = modifiedChain.getTransientStates()
     for i, x in enumerate(transientStates):
         if i < len(transientStates) - 1:
@@ -182,3 +196,8 @@ def switchToRecurrentClass():
         #     print("Please provide a valid input")
         except MarkovChainException as e:
             print(e.message)
+
+def longLine() -> None:
+    print("--------------------------------------------------------------------------------------------------")
+def longPlus() -> None:
+    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
