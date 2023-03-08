@@ -170,7 +170,7 @@ def showHittingTimeMatrices() -> None:
         else:
             print("T", i, ": ", x, sep = '')
 
-    yn = input("Would you like to know how to interperet these matrices? (y/n) ") #Prompts user if they want additional information
+    yn = input("\nWould you like to know how to interperet these matrices? (y/n) ") #Prompts user if they want additional information
     if yn.lower() == "y":
         print("M[i, j] represents the expected number of visits to transient state j, given starting in transient state i")
         print("MS[i, j] represents the probability of being absorbed into recurrent class j, given that you started in transient state i")
