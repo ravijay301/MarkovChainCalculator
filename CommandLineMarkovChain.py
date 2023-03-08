@@ -3,12 +3,27 @@ import numpy as np
 import ChainCalculator as cc
 from MarkovChain import MarkovChain
 from MarkovChainException import MarkovChainException
+import signal
+import time
 import sys
+
+def signal_handler(signal, frame):
+    print("\nYou think you can exit me :)")
+    for i in range(3):
+        print("...")
+        time.sleep(1)
+    print("Yes you can")
+    sys.exit(0)
 
 def main():
     global baseTPM, modifiedChain
+    signal.signal(signal.SIGINT, signal_handler)
     np.set_printoptions(precision = 3)
-    tpmPanda = pd.read_excel(sys.argv[1], header = None)
+    try: 
+        tpmPanda = pd.read_excel(sys.argv[1], header = None)
+    except ValueError:
+        print("Invalid Excel File")
+        sys.exit(0)
     baseTPM = np.array(tpmPanda)
     modTPM = baseTPM.copy()
     try: 
@@ -133,7 +148,7 @@ def resetChain():
 def showHittingTimeMatrices() -> None:
     global modifiedChain
     formattedMatrix = cc.getFormattedMatrix(modifiedChain)          # Obtains formatted matrix
-    (M, MS) = cc.getHittingTimeMatrices(formattedMatrix, 0)         # Obtains M and MS Matrices from formatted matrix
+    (M, MS) = cc.getHittingTimeMatrices(formattedMatrix)         # Obtains M and MS Matrices from formatted matrix
     print("Formatted Matrix =\n", formattedMatrix, sep = '')
     print("\nM =\n", M, sep = '')
     print("\nMS =\n", MS, sep = '', end = "\n\n")
@@ -192,11 +207,12 @@ def switchToRecurrentClass():
             recClass = int(input("Which recurrent class would you like to switch to? "))
             modifiedChain = cc.getChainOfRecurrentClass(modifiedChain, recClass)
             break
-        # except ValueError:
-        #     print("Please provide a valid input")
+        except ValueError:
+            print("Please provide a valid input")
         except MarkovChainException as e:
             print(e.message)
 
+# Extremely useful helper functions
 def longLine() -> None:
     print("--------------------------------------------------------------------------------------------------")
 def longPlus() -> None:

@@ -60,12 +60,12 @@ def getChainOfRecurrentClass(markovChain: MarkovChain, classNum: int) -> MarkovC
 
 def getProbOfAbsorbtionIntoRecurrentClass(markovChain: MarkovChain, classNum: int, initialState: int) -> float:
     formattedMatrix = getFormattedMatrix(markovChain)
-    (M, MS) = getHittingTimeMatrices(formattedMatrix, len(markovChain.recurrentClasses))
+    (M, MS) = getHittingTimeMatrices(formattedMatrix)
     return MS[markovChain.getTransientStates().index(initialState), classNum]
 
 def getTimeUntilAbsorbtion(markovChain: MarkovChain, initialState) -> float:
     formattedMatrix = getFormattedMatrix(markovChain)
-    (M, MS) = getHittingTimeMatrices(formattedMatrix, len(markovChain.recurrentClasses))
+    (M, MS) = getHittingTimeMatrices(formattedMatrix)
     return sum(M[markovChain.getTransientStates().index(initialState)])
 
 """
@@ -74,20 +74,26 @@ Given a MC, returns modified chain with new TPM with condensed recurrent classes
 def getFormattedMatrix(markovChain: MarkovChain) -> np.ndarray:
     numRecStates = 0
     numAbsorbingStates = len(markovChain.recurrentClasses)
-    for x in markovChain.recurrentClasses:
-        numRecStates += len(x)
-    n = len(markovChain.tpm) + numAbsorbingStates - numRecStates
+    for x in markovChain.recurrentClasses:      # Sums for the number of recurrent states
+        numRecStates += len(x)      
+
+    # Calculates the n x n size of the formatted matrix based on the number of recurrent classes
+    n = len(markovChain.tpm) + numAbsorbingStates - numRecStates 
     newProbMatrix = np.zeros((n, n))
+
     transientStates = markovChain.getTransientStates()
     for j in range(numAbsorbingStates):
-        newProbMatrix[j,j] = 1
+        newProbMatrix[j,j] = 1                  # Designates top left corner of matrix to be absorbing classes
         for i, x in enumerate(transientStates):
             transitionProb = 0
+            # Sums the probability for transient state to transition to a specific recurrent class 
             for y in markovChain.recurrentClasses[j]:
                 transitionProb += markovChain.tpm[x, y]
 
+            # Fills bottom left of matrix with the transient state -> recurrent class probabilities
             newProbMatrix[i + numAbsorbingStates, j] = transitionProb
     
+    # Finishes by filling bottom right of matrix transient state -> transient state probabilies
     for i in range(len(transientStates)):
         for j in range(len(transientStates)):
             newProbMatrix[i + numAbsorbingStates, j + numAbsorbingStates] = markovChain.tpm[transientStates[i], transientStates[j]]
@@ -97,15 +103,15 @@ def getFormattedMatrix(markovChain: MarkovChain) -> np.ndarray:
 """
 Given a properly formatted matrix, returns M = (I - Q)^(-1) and MS
 """
-def getHittingTimeMatrices(formattedMatrix: np.ndarray, numAbsorbingStates: int):
+def getHittingTimeMatrices(formattedMatrix: np.ndarray):
     numAbsStates = 0
     for i in range(len(formattedMatrix)):
         if(formattedMatrix[i, i] == 1):
             numAbsStates += 1
         else:
             break
-    numAbsorbingStates = numAbsStates
-    Q = formattedMatrix[numAbsorbingStates:, numAbsorbingStates:]
-    S = formattedMatrix[numAbsorbingStates:, 0:numAbsorbingStates]
-    M = np.linalg.inv((np.eye(len(formattedMatrix) - numAbsorbingStates) - Q))
+
+    Q = formattedMatrix[numAbsStates:, numAbsStates:]
+    S = formattedMatrix[numAbsStates:, 0:numAbsStates]
+    M = np.linalg.inv((np.eye(len(formattedMatrix) - numAbsStates) - Q))
     return (M, np.matmul(M, S))
