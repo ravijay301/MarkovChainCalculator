@@ -99,7 +99,7 @@ def getInputRange(start: int, end: int) -> int:
         raise AttributeError
     while(True):
         try: 
-            numChoice = int(input("Enter num 1-6 to indicate choice: "))
+            numChoice = int(input("Enter number {0}-{1} to indicate choice: ".format(start, end)))
             if numChoice < start or numChoice > end:
                 raise ValueError
             else:
