@@ -17,7 +17,6 @@ def main():
     except MarkovChainException as e:
         print(e.message)
 
-
 def menu():
     global modifiedChain
     while(True):
@@ -37,7 +36,7 @@ def menu():
         elif numChoice == 2:
             showClasses()
         elif numChoice == 3:
-            while(True):
+            while(True):                #Idea is that usually you want to make more than one class absorbing
                 makeAbsorbingState()
                 yn = input("Would you like to make another state absorbing? (y/n) ")
                 if yn.lower() == "y":
@@ -183,6 +182,3 @@ def switchToRecurrentClass():
         #     print("Please provide a valid input")
         except MarkovChainException as e:
             print(e.message)
-
-if __name__ == "__main__" :
-    main()
