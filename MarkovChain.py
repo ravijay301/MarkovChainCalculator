@@ -1,6 +1,8 @@
 import numpy as np
 import copy
 import StronglyConnectedComponents as sc
+from MarkovChainException import MarkovChainException
+import math
 
 """
 Class that stores the most important pieces of information about a Markov Chain. Contains the transitions probability
@@ -8,8 +10,24 @@ matrix, as well as lists of the recurrent and transient classes as well as the t
 """
 class MarkovChain:
 
-    def __init__(self, transitionProbabilityMatrix: np.ndarray):
-        self.tpm = transitionProbabilityMatrix
+    """
+    Constructs MarkovChain with the given transition probability matrix. Computes communications classes, and classification
+    of each as either recurrent or transient. Raises MarkovChainException if rows are not valid probability vectors, 
+    """
+    def __init__(self, tpm: np.ndarray):
+        (n, m) = np.shape(tpm)
+        if n == 0:
+            raise MarkovChainException("No chain detected")
+        if n != m:
+            raise MarkovChainException("Square matrix required for valid MarkovChain.")
+        for row in tpm:
+            sum = 0
+            for val in row:
+                sum += val
+            if not math.isclose(1, sum, abs_tol = 1e-9):
+                raise MarkovChainException("Invalid chain. Rows not valid probability vectors.")
+
+        self.tpm = tpm
         self.commClasses = self.getCommunicationClasses()
         self.recurrentClasses = self.getRecurrentClasses()
         self.transientClasses = self.getTransientClasses()

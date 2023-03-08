@@ -1,5 +1,8 @@
+"""
+Class with methods that perform calculations on MarkovChains. Most methods require MarkovChains as arguements
+to perform calculations, or returns new MarkovChains with the calculations performed on them
+"""
 import numpy as np
-import copy
 from MarkovChain import MarkovChain
 from MarkovChainException import MarkovChainException
 

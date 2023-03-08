@@ -4,14 +4,19 @@ import ChainCalculator as cc
 from MarkovChain import MarkovChain
 from MarkovChainException import MarkovChainException
 import sys
-import copy
 
-np.set_printoptions(precision = 3)
-tpmPanda = pd.read_excel(sys.argv[1], header = None)
-baseTPM = np.array(tpmPanda)
-modTPM = baseTPM.copy()
+def main():
+    global baseTPM, modifiedChain
+    np.set_printoptions(precision = 3)
+    tpmPanda = pd.read_excel(sys.argv[1], header = None)
+    baseTPM = np.array(tpmPanda)
+    modTPM = baseTPM.copy()
+    try: 
+        modifiedChain = MarkovChain(modTPM)
+        menu()
+    except MarkovChainException as e:
+        print(e.message)
 
-modifiedChain: MarkovChain = MarkovChain(modTPM)
 
 def menu():
     global modifiedChain
@@ -50,7 +55,13 @@ def menu():
         elif numChoice == 8:
             break
     
+"""
+Given an input range of int, will prompt CLI for input, and only will accept
+the numbers in the range. Raises attribute error if start > end
+"""
 def getInputRange(start: int, end: int) -> int:
+    if end < start:
+        raise AttributeError
     while(True):
         try: 
             numChoice = int(input("Enter num 1-6 to indicate choice: "))
@@ -173,7 +184,5 @@ def switchToRecurrentClass():
         except MarkovChainException as e:
             print(e.message)
 
-
-
-
-menu()
+if __name__ == "__main__" :
+    main()
