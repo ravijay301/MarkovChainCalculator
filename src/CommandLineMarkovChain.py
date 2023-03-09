@@ -30,6 +30,9 @@ def main():
     except FileNotFoundError:
         print("File or directory " + sys.argv[1] +  " not found")
         sys.exit(0)
+    except PermissionError:
+        print("Permissions for " + sys.argv[1] + " denied. Perhaps file is open.")
+        sys.exit(0)
     
     baseTPM = np.array(tpmPanda)
     modTPM = baseTPM.copy()
