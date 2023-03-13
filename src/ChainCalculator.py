@@ -1,7 +1,3 @@
-"""
-Class with methods that perform calculations on MarkovChains. Most methods require MarkovChains as arguements
-to perform calculations, or returns new MarkovChains with the calculations performed on them
-"""
 import numpy as np
 from MarkovChain import MarkovChain
 from MarkovChainException import MarkovChainException
@@ -12,7 +8,7 @@ it is not possible (IE chain not being irreducible).
 """
 def getStationaryDistribution(markovChain: MarkovChain) -> np.ndarray:
     if len(markovChain.recurrentClasses) != 1 or len(markovChain.transientClasses) > 0:
-        raise MarkovChainException("Chain is not irreducible, cannot compute unique stationary distribution")     
+        raise MarkovChainException("Chain is not irreducible, unique stationary distribution does not exist")     
        
     n = len(markovChain.tpm)
     """
